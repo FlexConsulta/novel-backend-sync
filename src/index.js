@@ -26,6 +26,10 @@ servers.forEach(async (server) => {
           server.port,
           false
         );
+        const sql1Main = await model_main.query(sql1, {
+          type: QueryTypes.SELECT,
+        });
+
         const model_customer = syncDatabase(
           database.name_client,
           database.user_client,
@@ -36,14 +40,12 @@ servers.forEach(async (server) => {
           false
         );
 
-        const sql1Main = await model_main.query(sql1, {
-          type: QueryTypes.SELECT,
-        });
         const sql1Customer = await model_customer.query(sql1, {
           type: QueryTypes.SELECT,
         });
 
         console.log(sql1Customer);
+
         console.log(sql1Main);
         sql1Customer.close();
         sql1Main.close();
