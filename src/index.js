@@ -17,7 +17,6 @@ servers.forEach(async (server) => {
     .filter((database) => database.id_server === server.id)
     .forEach(async (database) => {
       try {
-        console.log(database.name_default);
         const model_main = syncDatabase(
           database.name_default,
           database.user_default,
@@ -44,10 +43,14 @@ servers.forEach(async (server) => {
           type: QueryTypes.SELECT,
         });
 
-        console.log(sql1Main, sql1Customer);
-        model_main.close();
+        console.log(sql1Customer);
+        console.log(sql1Main);
+        sql1Customer.close();
+        sql1Main.close();
       } catch (error) {
-        console.log(`database:${server.url}/${database.name_default} ${error}`);
+        console.log(
+          `database:::${server.url}/${database.name_default}::error: ${error}`
+        );
       }
       // console.log(server.id, database.id, database.description);
     });
