@@ -17,18 +17,24 @@ servers.forEach(async (server) => {
     .filter((database) => database.id_server === server.id)
     .forEach(async (database) => {
       try {
-        const model_main = syncDatabase(
-          database.name_default,
-          database.user_default,
-          database.password_default,
-          server.url,
-          "postgres",
-          server.port,
-          false
-        );
-        const sql1Main = await model_main.query(sql1, {
-          type: QueryTypes.SELECT,
-        });
+        try {
+          const model_main = syncDatabase(
+            database.name_default,
+            database.user_default,
+            database.password_default,
+            server.url,
+            "postgres",
+            server.port,
+            false
+          );
+          const sql1Main = await model_main.query(sql1, {
+            type: QueryTypes.SELECT,
+          });
+
+          console.log("local", sql1Main);
+        } catch (error) {
+          console.log("erro consulta main:", error);
+        }
 
         const model_customer = syncDatabase(
           database.name_client,
@@ -36,22 +42,33 @@ servers.forEach(async (server) => {
           database.password_client,
           database.hostname_client,
           "postgres",
-          server.port,
+          database.port_client,
           false
+        );
+        console.log(
+          "cliente",
+          database.name_client,
+          " ",
+          database.user_client,
+          " ",
+          database.password_client,
+          " ",
+          database.hostname_client,
+          " ",
+          database.port_client
         );
 
         const sql1Customer = await model_customer.query(sql1, {
           type: QueryTypes.SELECT,
         });
 
-        console.log(sql1Customer);
+        console.log("cliente", sql1Customer);
 
-        console.log(sql1Main);
-        sql1Customer.close();
-        sql1Main.close();
+        // sql1Customer.close();
+        // sql1Main.close();
       } catch (error) {
         console.log(
-          `database:::${server.url}/${database.name_default}::error: ${error}`
+          `database:::${server.url}/${database.name_client}::error: ${error}`
         );
       }
       // console.log(server.id, database.id, database.description);
