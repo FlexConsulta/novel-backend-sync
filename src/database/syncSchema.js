@@ -9,7 +9,7 @@ const syncDatabase = (
   DB_PORT,
   DB_LOGGING
 ) => {
-  const sequelizeModel = new Sequelize(DB_NAME, DB_USERNAME, DB_PASSWORD, {
+  return new Sequelize(DB_NAME, DB_USERNAME, DB_PASSWORD, {
     host: DB_HOST,
     dialect: DB_DIALECT,
     port: DB_PORT,
@@ -24,8 +24,6 @@ const syncDatabase = (
     // },
     logging: eval(DB_LOGGING),
   });
-
-  return sequelizeModel;
 };
 
 export default syncDatabase;
