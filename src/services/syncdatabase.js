@@ -64,7 +64,11 @@ export const syncAllDatabase = async (recursive) => {
             `database:::${server.url}/${database.name_client}::error: ${error}`
           );
         }
-        console.log("SINCRONIZANDO...", database.description);
+        console.log(
+          "SINCRONIZANDO...",
+          new Date().toLocaleString("pt-BR"),
+          database.description
+        );
       });
   });
 
