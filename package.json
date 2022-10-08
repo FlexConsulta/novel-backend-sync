@@ -10,7 +10,7 @@
   "scripts": {
     "start": "node --es-module-specifier-resolution=node ./src/index.js",
     "migration": "set NODE_ENV=migration && node --es-module-specifier-resolution=node ./src/database/start.database.js",
-    "dev": "set NODE_ENV=env && nodemon --es-module-specifier-resolution=node ./src/index.js",
+    "dev": "nodemon --es-module-specifier-resolution=node ./src/index.js",
     "pretest": "NODE_ENV=test node ./src/database/start.database.js",
     "test": "jest",
     "posttest": "NODE_ENV=test node ./src/database/undo.database.js"
