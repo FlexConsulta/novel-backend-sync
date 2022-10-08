@@ -1,0 +1,23 @@
+name: Deploy dev
+on:
+  push:
+    branches:
+      - "*"
+      - "!master"
+      - "!main"
+      - "!homologacao"
+jobs:
+  deploy:
+    name: Deploy development
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: FTP-Deploy-Action
+        uses: SamKirkland/FTP-Deploy-Action@4.3.0
+        with:
+          server: ${{ secrets.FTP_SERVER }}
+          username: ${{ secrets.FTP_USER }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          local-dir: "./"
+          server-dir: "/monitor/backend-sync/dev/"
+          git-ftp-args: "--changed-only"
