@@ -22,10 +22,8 @@ switch (databaseType) {
       DB_PASSWORD,
       DB_DIALECT,
       DB_LOGGING,
-      DB_PORT
+      DB_PORT,
     } = process.env;
-
-    
 
     sequelizeModel = new Sequelize(DB_NAME, DB_USERNAME, DB_PASSWORD, {
       host: DB_HOST,
@@ -38,9 +36,6 @@ switch (databaseType) {
       },
       logging: eval(DB_LOGGING),
     });
-
-    
-
 
     break;
 }
