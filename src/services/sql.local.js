@@ -21,7 +21,6 @@ export const executeSqlLocal = async (server, database, qry) => {
     } else {
       value = result[0][qry.fieldName]?.toString();
     }
-
     return { value, status: 200 };
   } catch (error) {
     return { value: "Erro", status: 500, errorMessage: error?.message };
