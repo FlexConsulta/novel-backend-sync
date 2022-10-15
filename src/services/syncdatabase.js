@@ -11,9 +11,11 @@ const databases = await DatabasesController.getAllDataBases();
 const sqls = [
   {
     sql: `select count(*) from conhecimento where conhecimento.datadigitacao BETWEEN CURRENT_DATE - '30 days'::interval AND CURRENT_DATE`,
+    fieldName: "count",
   },
   {
-    sql: `select count(*) from nota where nota.datadigitacao BETWEEN CURRENT_DATE - '30 days'::interval AND CURRENT_DATE`,
+    sql: `select now() as dataAtual`,
+    fieldName: "dataatual",
   },
 ];
 
@@ -26,21 +28,46 @@ export const syncAllDatabase = async (recursive) => {
           let status_connection = 200;
           let logDescription = {};
 
-          const { value, status } = await executeSqlLocal(
+          const {
+            value: valueSql0,
+            status: statusSql0,
+            errorMessage: errorMessageLocal,
+          } = await executeSqlLocal(server, database, sqls[0]);
+
+          const { value: valueSql1 } = await executeSqlLocal(
             server,
             database,
-            sqls[0].sql
+            sqls[1]
           );
 
-          logDescription = { ...logDescription, travelsLocal: value };
-
-          if (status_connection != 500) status_connection = status;
-
-          const { value: valueCustomer, status: statusCustomer } =
-            await executeSqlCustomer(database, sqls[0].sql);
           logDescription = {
             ...logDescription,
-            travelsCustomer: valueCustomer,
+            travelsLocal: valueSql0,
+            currentDateLocal: valueSql1,
+            errorMessageLocal,
+          };
+
+          if (status_connection != 500) status_connection = statusSql0;
+
+          const {
+            value: valueCustomerSql0,
+            status: statusCustomer,
+            errorMessage: errorMessageCustomer,
+          } = await executeSqlCustomer(database, sqls[0]);
+          logDescription = {
+            ...logDescription,
+            travelsCustomer: valueCustomerSql0,
+          };
+
+          const { value: valueCustomerSql1 } = await executeSqlCustomer(
+            database,
+            sqls[0]
+          );
+          logDescription = {
+            ...logDescription,
+            travelsCustomer: valueCustomerSql0,
+            currentDateCustomer: valueCustomerSql1,
+            errorMessageCustomer,
           };
 
           if (status_connection != 500) status_connection = statusCustomer;
@@ -51,18 +78,23 @@ export const syncAllDatabase = async (recursive) => {
             status_connection,
           };
 
+          // console.log(logData);
+
           await LogController.createLog(logData);
         } catch (error) {
           const logData = {
-            description: JSON.stringify(logDescription),
+            description: JSON.stringify({
+              ...logDescription,
+            }),
+            globalErrorMessage: error?.message,
             id_database: database.id,
             status_connection: 500,
           };
           await LogController.createLog(logData);
 
-          console.log(
-            `database:::${server.url}/${database.name_client}::error: ${error}`
-          );
+          // console.log(
+          //   `database:::${server.url}/${database.name_client}::error: ${error}`
+          // );
         }
         console.log(
           "SINCRONIZANDO...",

@@ -1,7 +1,7 @@
 import syncDatabase from "./../database/syncSchema";
 import { QueryTypes } from "sequelize";
 
-export const executeSqlLocal = async (server, database, sql) => {
+export const executeSqlLocal = async (server, database, qry) => {
   try {
     const connection = syncDatabase(
       database.name_default,
@@ -12,13 +12,19 @@ export const executeSqlLocal = async (server, database, sql) => {
       server.port,
       false
     );
-    const result = await connection.query(sql, {
+    const result = await connection.query(qry.sql, {
       type: QueryTypes.SELECT,
     });
+    let value;
+    if (qry.fieldName === "dataatual") {
+      value = result[0][qry.fieldName]?.toLocaleString();
+    } else {
+      value = result[0][qry.fieldName]?.toString();
+    }
 
-    return { value: result[0].count.toString(), status: 200 };
+    return { value, status: 200 };
   } catch (error) {
-    console.log(error);
-    return { value: "Erro", status: 500 };
+    // console.log("------------", qry.fieldName, error);
+    return { value: "Erro", status: 500, errorMessage: error?.message };
   }
 };
