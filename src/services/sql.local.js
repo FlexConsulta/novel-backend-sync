@@ -24,7 +24,6 @@ export const executeSqlLocal = async (server, database, qry) => {
 
     return { value, status: 200 };
   } catch (error) {
-    // console.log("------------", qry.fieldName, error);
     return { value: "Erro", status: 500, errorMessage: error?.message };
   }
 };
