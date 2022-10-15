@@ -17,7 +17,7 @@ export const executeSqlLocal = async (server, database, qry) => {
     });
     let value;
     if (qry.fieldName === "dataatual") {
-      value = result[0][qry.fieldName]?.toLocaleString();
+      value = result[0][qry.fieldName]?.toLocaleString("pt-BR");
     } else {
       value = result[0][qry.fieldName]?.toString();
     }
