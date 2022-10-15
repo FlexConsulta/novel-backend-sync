@@ -25,7 +25,6 @@ export const executeSqlCustomer = async (database, qry) => {
 
     return { value, status: 200 };
   } catch (error) {
-    // console.log("----------->>", error?.message);
     return { value: "Erro", status: 500, errorMessage: error?.message };
   }
 };

@@ -61,7 +61,7 @@ export const syncAllDatabase = async (recursive) => {
 
           const { value: valueCustomerSql1 } = await executeSqlCustomer(
             database,
-            sqls[0]
+            sqls[1]
           );
           logDescription = {
             ...logDescription,
