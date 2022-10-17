@@ -104,6 +104,6 @@ export const syncAllDatabase = async (recursive) => {
   if (recursive) {
     setTimeout(() => {
       syncAllDatabase(true);
-    }, 300000);
+    }, 60000 * 20);
   }
 };
