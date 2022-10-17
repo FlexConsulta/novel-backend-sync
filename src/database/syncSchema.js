@@ -9,7 +9,7 @@ const syncDatabase = (
   DB_PORT,
   DB_LOGGING
 ) => {
-  const sequelizeModel = new Sequelize(DB_NAME, DB_USERNAME, DB_PASSWORD, {
+  return new Sequelize(DB_NAME, DB_USERNAME, DB_PASSWORD, {
     host: DB_HOST,
     dialect: DB_DIALECT,
     port: DB_PORT,
@@ -18,10 +18,12 @@ const syncDatabase = (
       underscored: true,
       underscoredAll: true,
     },
+    // dialectOptions: {
+    //   statement_timeout: 3000,
+    //   idle_in_transaction_session_timeout: 3000,
+    // },
     logging: eval(DB_LOGGING),
   });
-
-  return sequelizeModel;
 };
 
 export default syncDatabase;
