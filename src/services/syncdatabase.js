@@ -4,9 +4,6 @@ import LogController from "./../controllers/logs.controller";
 import { executeSqlLocal } from "./../services/sql.local";
 import { executeSqlCustomer } from "./../services/sql.customer";
 
-const servers = await ServerController.getAllServers();
-const databases = await DatabasesController.getAllDataBases();
-
 // todo - ficou definido que nesta primeira verão teremos apenas uma consulta sql, de viagens, poderiormente teremos um cadastro de sql
 const sqls = [
   {
@@ -20,6 +17,8 @@ const sqls = [
 ];
 
 export const syncAllDatabase = async (recursive) => {
+  const servers = await ServerController.getAllServers();
+  const databases = await DatabasesController.getAllDataBases();
   servers.forEach((server) => {
     databases
       .filter((database) => database.id_server === server.id)
