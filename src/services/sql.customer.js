@@ -3,13 +3,21 @@ import { QueryTypes } from "sequelize";
 
 export const executeSqlCustomer = async (database, qry) => {
   try {
+    const {
+      name_client,
+      user_client,
+      password_client,
+      hostname_client,
+      port_client,
+    } = database;
+
     const connection = syncDatabase(
-      database.name_client,
-      database.user_client,
-      database.password_client,
-      database.hostname_client,
+      name_client,
+      user_client,
+      password_client,
+      hostname_client,
       "postgres",
-      database.port_client,
+      port_client,
       false
     );
     const result = await connection.query(qry.sql, {
@@ -25,6 +33,7 @@ export const executeSqlCustomer = async (database, qry) => {
 
     return { value, status: 200 };
   } catch (error) {
+    // console.error("erro ao consultar banco do cliente:", error);
     return { value: "Erro", status: 500, errorMessage: error?.message };
   }
 };
