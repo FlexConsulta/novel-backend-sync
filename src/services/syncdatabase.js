@@ -84,9 +84,15 @@ export const syncAllDatabase = async (recursive) => {
               status_connection,
             };
 
-            // console.log(logData);
-
             await LogController.createLog(logData);
+
+            console.log(
+              "SINCRONIZANDO...",
+              new Date().toLocaleString("pt-BR"),
+              database.description
+            );
+
+            return logData;
           } catch (error) {
             const logData = {
               description: JSON.stringify({
@@ -97,22 +103,14 @@ export const syncAllDatabase = async (recursive) => {
               status_connection: 500,
             };
             await LogController.createLog(logData);
-
-            // console.log(
-            //   `database:::${server.url}/${database.name_client}::error: ${error}`
-            // );
+            return logData;
           }
-          console.log(
-            "SINCRONIZANDO...",
-            new Date().toLocaleString("pt-BR"),
-            database.description
-          );
         });
     });
 
   if (recursive) {
-    setTimeout(() => {
-      syncAllDatabase(true);
+    setTimeout(async () => {
+      await syncAllDatabase(true);
     }, 60000 * 20);
   }
 };
