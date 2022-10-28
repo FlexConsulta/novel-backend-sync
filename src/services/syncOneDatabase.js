@@ -1,8 +1,8 @@
-import ServerController from "./../controllers/servers.controller";
-import DatabasesController from "./../controllers/databases.controller";
-import LogController from "./../controllers/logs.controller";
-import { executeSqlLocal } from "./../services/sql.local";
-import { executeSqlCustomer } from "./../services/sql.customer";
+import ServerController from "../controllers/servers.controller";
+import DatabasesController from "../controllers/databases.controller";
+import LogController from "../controllers/logs.controller";
+import { executeSqlLocal } from "./sql.local";
+import { executeSqlCustomer } from "./sql.customer";
 
 // todo - ficou definido que nesta primeira verão teremos apenas uma consulta sql, de viagens, poderiormente teremos um cadastro de sql
 const sqls = [
@@ -16,23 +16,14 @@ const sqls = [
   },
 ];
 
-export const syncAllDatabase = async (recursive) => {
-  const servers = await ServerController.getAllServers();
+export const syncOneDatabase = async (id_database) => {
   const databases = await DatabasesController.getAllDataBases();
+  const servers = await ServerController.getAllServers();
+  
+  const database = databases.find((database) => database.id == id_database);
+  const server = servers.find((server) => database.id_server == server.id);
 
-  console.log("servers:", servers.length);
-  console.log("databases:", databases.length);
 
-  servers
-    .sort((a, b) => a.name - b.name)
-    //  .filter((server) => server.id === 11)
-    .forEach((server) => {
-      console.log("  ", server.name, "");
-      databases
-        // .filter((database) => database.id === 51)
-        .filter((database) => database.id_server === server.id)
-        .forEach(async (database) => {
-          console.log("   - ", database.name_client);
           try {
             let status_connection = 200;
             let logDescription = {};
@@ -84,15 +75,12 @@ export const syncAllDatabase = async (recursive) => {
               status_connection,
             };
 
+            // console.log(logData);
+
             await LogController.createLog(logData);
-
-            console.log(
-              "SINCRONIZANDO...",
-              new Date().toLocaleString("pt-BR"),
-              database.description
-            );
-
             return logData;
+
+
           } catch (error) {
             const logData = {
               description: JSON.stringify({
@@ -103,14 +91,20 @@ export const syncAllDatabase = async (recursive) => {
               status_connection: 500,
             };
             await LogController.createLog(logData);
-            return logData;
-          }
-        });
-    });
 
-  if (recursive) {
-    setTimeout(async () => {
-      await syncAllDatabase(true);
-    }, 60000 * 20);
-  }
+            return logData;
+            
+            // console.log(
+            //   `database:::${server.url}/${database.name_client}::error: ${error}`
+            // );
+          }
+          console.log(
+            "SINCRONIZANDO...",
+            new Date().toLocaleString("pt-BR"),
+            database.description
+          );
+
+         
+        
+
 };
