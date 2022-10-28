@@ -2,7 +2,7 @@ import "dotenv/config";
 import express from "express";
 import { clearOldLogs } from "./services/clearOldLogs";
 import { syncAllDatabase } from "./services/syncdatabase";
-import { syncOneDatabase } from "./services/synconedatabase";
+import { syncOneDatabase } from "./services/syncOneDatabase";
 
 const { PORT, HOST } = process.env;
 
