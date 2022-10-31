@@ -14,6 +14,14 @@ const sqls = [
     sql: `select now() as dataAtual`,
     fieldName: "dataatual",
   },
+  {
+    sql: `SELECT max(conhecimento.numero) FROM conhecimento where conhecimento.data > CURRENT_DATE - '1 days'::interval`,
+    fieldName: "max",
+  },
+  {
+    sql: `SELECT max(nota.codnota) FROM nota where nota.datadigitacao = CURRENT_DATE - '1 days'::interval`,
+    fieldName: "max",
+  },
 ];
 
 export const syncAllDatabase = async (recursive) => {
@@ -48,11 +56,26 @@ export const syncAllDatabase = async (recursive) => {
               database,
               sqls[1]
             );
+            const { value: valueSqlMaxCteToDay } = await executeSqlLocal(
+              server,
+              database,
+              sqls[2]
+            );
+
+            const { value: valueSqlMaxInvoiceToDay } = await executeSqlLocal(
+              server,
+              database,
+              sqls[3]
+            );
+
+            // console.log("valueSqlMaxCteToDay", valueSqlMaxCteToDay);
 
             logDescription = {
               ...logDescription,
               travelsLocal: valueSql0,
               currentDateLocal: valueSql1,
+              max_invoice_today: valueSqlMaxInvoiceToDay,
+              max_cte_today: valueSqlMaxCteToDay,
               errorMessageLocal,
             };
 

@@ -15,6 +15,7 @@ export const executeSqlLocal = async (server, database, qry) => {
     const result = await connection.query(qry.sql, {
       type: QueryTypes.SELECT,
     });
+
     let value;
     if (qry.fieldName === "dataatual") {
       value = result[0][qry.fieldName]?.toLocaleString("pt-BR");
@@ -23,6 +24,7 @@ export const executeSqlLocal = async (server, database, qry) => {
     }
     return { value, status: 200 };
   } catch (error) {
+    // console.log(error);
     return { value: "Erro", status: 500, errorMessage: error?.message };
   }
 };
