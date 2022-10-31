@@ -19,7 +19,7 @@ const sqls = [
     fieldName: "max",
   },
   {
-    sql: `SELECT max(nota.codnota) FROM nota where nota.datadigitacao = CURRENT_DATE - '1 days'::interval`,
+    sql: `SELECT max(nota.codnota) FROM nota where nota.datadigitacao > CURRENT_DATE - '1 days'::interval`,
     fieldName: "max",
   },
 ];
@@ -79,7 +79,7 @@ export const syncAllDatabase = async (recursive) => {
               errorMessageLocal,
             };
 
-            console.log("logDescription", logDescription);
+            // console.log("logDescription", logDescription);
 
             if (status_connection != 500) status_connection = statusSql0;
 
