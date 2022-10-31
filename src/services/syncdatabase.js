@@ -79,6 +79,8 @@ export const syncAllDatabase = async (recursive) => {
               errorMessageLocal,
             };
 
+            console.log("logDescription", logDescription);
+
             if (status_connection != 500) status_connection = statusSql0;
 
             const {
