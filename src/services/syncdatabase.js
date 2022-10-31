@@ -14,6 +14,14 @@ const sqls = [
     sql: `select now() as dataAtual`,
     fieldName: "dataatual",
   },
+  {
+    sql: `SELECT max(conhecimento.numero) FROM conhecimento where conhecimento.data > CURRENT_DATE - '1 days'::interval`,
+    fieldName: "max",
+  },
+  {
+    sql: `SELECT max(nota.codnota) FROM nota where nota.datadigitacao > CURRENT_DATE - '1 days'::interval`,
+    fieldName: "max",
+  },
 ];
 
 export const syncAllDatabase = async (recursive) => {
@@ -48,13 +56,30 @@ export const syncAllDatabase = async (recursive) => {
               database,
               sqls[1]
             );
+            const { value: valueSqlMaxCteToDay } = await executeSqlLocal(
+              server,
+              database,
+              sqls[2]
+            );
+
+            const { value: valueSqlMaxInvoiceToDay } = await executeSqlLocal(
+              server,
+              database,
+              sqls[3]
+            );
+
+            // console.log("valueSqlMaxCteToDay", valueSqlMaxCteToDay);
 
             logDescription = {
               ...logDescription,
               travelsLocal: valueSql0,
               currentDateLocal: valueSql1,
+              max_invoice_today: valueSqlMaxInvoiceToDay,
+              max_cte_today: valueSqlMaxCteToDay,
               errorMessageLocal,
             };
+
+            // console.log("logDescription", logDescription);
 
             if (status_connection != 500) status_connection = statusSql0;
 
@@ -84,9 +109,15 @@ export const syncAllDatabase = async (recursive) => {
               status_connection,
             };
 
-            // console.log(logData);
-
             await LogController.createLog(logData);
+
+            console.log(
+              "SINCRONIZANDO...",
+              new Date().toLocaleString("pt-BR"),
+              database.description
+            );
+
+            return logData;
           } catch (error) {
             const logData = {
               description: JSON.stringify({
@@ -97,22 +128,14 @@ export const syncAllDatabase = async (recursive) => {
               status_connection: 500,
             };
             await LogController.createLog(logData);
-
-            // console.log(
-            //   `database:::${server.url}/${database.name_client}::error: ${error}`
-            // );
+            return logData;
           }
-          console.log(
-            "SINCRONIZANDO...",
-            new Date().toLocaleString("pt-BR"),
-            database.description
-          );
         });
     });
 
   if (recursive) {
-    setTimeout(() => {
-      syncAllDatabase(true);
+    setTimeout(async () => {
+      await syncAllDatabase(true);
     }, 60000 * 20);
   }
 };
