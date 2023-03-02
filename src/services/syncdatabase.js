@@ -53,31 +53,31 @@ export const syncAllDatabase = async (recursive) => {
         let status_connection = 200;
         let logDescription = {};
 
-        console.log("---> 1");
+        // console.log("---> 1");
         const {
           value: valueSql0,
           status: statusSql0,
           errorMessage: errorMessageLocal,
         } = await executeSqlLocal(server, database, sqls[0]);
-        console.log("---> 2");
+        // console.log("---> 2");
         const { value: valueSql1 } = await executeSqlLocal(
           server,
           database,
           sqls[1]
         );
-        console.log("---> 3");
+        // console.log("---> 3");
         const { value: valueSqlMaxCteToDay } = await executeSqlLocal(
           server,
           database,
           sqls[2]
         );
-        console.log("---> 4");
+        // console.log("---> 4");
         const { value: valueSqlMaxInvoiceToDay } = await executeSqlLocal(
           server,
           database,
           sqls[3]
         );
-        console.log("---> 5");
+        // console.log("---> 5");
         logDescription = {
           ...logDescription,
           travelsLocal: valueSql0,
@@ -88,18 +88,18 @@ export const syncAllDatabase = async (recursive) => {
         };
 
         if (status_connection != 500) status_connection = statusSql0;
-        console.log("---> 6");
+        // console.log("---> 6");
         const {
           value: valueCustomerSql0,
           status: statusCustomer,
           errorMessage: errorMessageCustomer,
         } = await executeSqlCustomer(database, sqls[0]);
-        console.log("---> 7");
+        // console.log("---> 7");
         const { value: valueCustomerSql1 } = await executeSqlCustomer(
           database,
           sqls[1]
         );
-        console.log("---> 8");
+        // console.log("---> 8");
         logDescription = {
           ...logDescription,
           travelsCustomer: valueCustomerSql0,
@@ -114,9 +114,9 @@ export const syncAllDatabase = async (recursive) => {
           id_database: database.id,
           status_connection,
         };
-        console.log("---> 9");
+        // console.log("---> 9");
         await LogController.createLog(logData);
-        console.log("---> 10");
+        // console.log("---> 10");
         console.log(
           "SINCRONIZANDO...",
           new Date().toLocaleString("pt-BR"),
