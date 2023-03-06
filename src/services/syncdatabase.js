@@ -36,7 +36,6 @@ export const syncAllDatabase = async (recursive) => {
   const customLoopServers = async (idxServer) => {
     const server = serversSorted[idxServer];
     if (!server) return;
-    // console.log("server", server);
 
     console.log(" -> ", server.name, "");
 
@@ -45,7 +44,7 @@ export const syncAllDatabase = async (recursive) => {
         (db) => db.id_server === server.id
       );
       const database = dataBasesFiltered[idxDatabase];
-      if (!database) return;
+      if (!database || !dataBasesFiltered) return;
 
       console.log("   -> ", database.name_client);
 
