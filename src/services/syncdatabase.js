@@ -158,6 +158,6 @@ export const syncAllDatabase = async (recursive) => {
   if (recursive) {
     setTimeout(async () => {
       await syncAllDatabase(true);
-    }, 60000 * 20);
+    }, 90000 * 20);
   }
 };
