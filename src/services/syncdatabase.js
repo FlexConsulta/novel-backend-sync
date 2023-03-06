@@ -33,11 +33,9 @@ export const syncAllDatabase = async (recursive) => {
 
   servers
     .sort((a, b) => a.name - b.name)
-    //  .filter((server) => server.id === 11)
     .forEach((server) => {
       console.log("  ", server.name, "");
       databases
-        // .filter((database) => database.id === 51)
         .filter((database) => database.id_server === server.id)
         .forEach(async (database) => {
           console.log("   - ", database.name_client);
@@ -68,8 +66,6 @@ export const syncAllDatabase = async (recursive) => {
               sqls[3]
             );
 
-            // console.log("valueSqlMaxCteToDay", valueSqlMaxCteToDay);
-
             logDescription = {
               ...logDescription,
               travelsLocal: valueSql0,
@@ -79,20 +75,21 @@ export const syncAllDatabase = async (recursive) => {
               errorMessageLocal,
             };
 
-            // console.log("logDescription", logDescription);
-
             if (status_connection != 500) status_connection = statusSql0;
 
+            console.log("SQL customer 1 - started");
             const {
               value: valueCustomerSql0,
               status: statusCustomer,
               errorMessage: errorMessageCustomer,
             } = await executeSqlCustomer(database, sqls[0]);
-
+            console.log("SQL customer 1 - finished");
+            console.log("SQL customer 2 - started");
             const { value: valueCustomerSql1 } = await executeSqlCustomer(
               database,
               sqls[1]
             );
+            console.log("SQL customer 2 - finished");
 
             logDescription = {
               ...logDescription,
@@ -114,7 +111,7 @@ export const syncAllDatabase = async (recursive) => {
             console.log(
               "SINCRONIZANDO...",
               new Date().toLocaleString("pt-BR"),
-              database.description
+              JSON.stringify(database)
             );
 
             return logData;
