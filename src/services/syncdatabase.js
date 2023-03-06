@@ -46,7 +46,7 @@ export const syncAllDatabase = async (recursive) => {
           (db) => db.id_server === server.id
         );
         console.log("--->2");
-        if (!dataBasesFiltered) return;
+        if (!dataBasesFiltered.length > 0) return;
         console.log("--->3");
         const database = dataBasesFiltered[idxDatabase];
         console.log("--->4", database);
