@@ -40,11 +40,14 @@ export const syncAllDatabase = async (recursive) => {
     console.log(" -> ", server.name, "");
 
     const customLoopDatabases = async (idxDatabase) => {
+      console.log("");
       const dataBasesFiltered = databases.filter(
         (db) => db.id_server === server.id
       );
+      if (!dataBasesFiltered) return;
+
       const database = dataBasesFiltered[idxDatabase];
-      if (!database || !dataBasesFiltered) return;
+      if (!database) return;
 
       console.log("   -> ", database.name_client);
 
@@ -137,6 +140,7 @@ export const syncAllDatabase = async (recursive) => {
           status_connection: 500,
         };
         await LogController.createLog(logData);
+
         await customLoopDatabases(idxDatabase + 1);
       }
 
