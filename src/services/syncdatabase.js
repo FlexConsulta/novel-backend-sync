@@ -53,7 +53,7 @@ export const syncAllDatabase = async (recursive) => {
         if (!database) return;
         console.log("--->5");
 
-        console.log("   -> ", database.name_client);
+        console.log("   -> ", database.name_default);
 
         console.log(
           "SINCRONIZANDO...",
