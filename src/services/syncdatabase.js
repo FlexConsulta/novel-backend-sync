@@ -40,18 +40,21 @@ export const syncAllDatabase = async (recursive) => {
     console.log(" -> ", server.name, "");
 
     const customLoopDatabases = async (idxDatabase) => {
-      console.log("");
-      const dataBasesFiltered = databases.filter(
-        (db) => db.id_server === server.id
-      );
-      if (!dataBasesFiltered) return;
-
-      const database = dataBasesFiltered[idxDatabase];
-      if (!database) return;
-
-      console.log("   -> ", database.name_client);
-
       try {
+        console.log("--->1");
+        const dataBasesFiltered = databases.filter(
+          (db) => db.id_server === server.id
+        );
+        console.log("--->2");
+        if (!dataBasesFiltered) return;
+        console.log("--->3");
+        const database = dataBasesFiltered[idxDatabase];
+        console.log("--->4");
+        if (!database) return;
+        console.log("--->5");
+
+        console.log("   -> ", database.name_client);
+
         console.log(
           "SINCRONIZANDO...",
           new Date().toLocaleString("pt-BR"),
