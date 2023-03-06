@@ -49,7 +49,7 @@ export const syncAllDatabase = async (recursive) => {
         if (!dataBasesFiltered) return;
         console.log("--->3");
         const database = dataBasesFiltered[idxDatabase];
-        console.log("--->4");
+        console.log("--->4", database);
         if (!database) return;
         console.log("--->5");
 
