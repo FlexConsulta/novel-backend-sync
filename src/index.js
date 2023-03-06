@@ -8,10 +8,6 @@ const { PORT, HOST } = process.env;
 
 const app = express();
 
-syncAllDatabase(true);
-
-clearOldLogs();
-
 app.post("/refresh", async (req, res) => {
   await syncAllDatabase(false);
   res.send("sincronizado").status(200);
@@ -24,5 +20,7 @@ app.get("/test-connection", async (req, res, next) => {
 });
 
 app.listen(PORT, () => {
+  syncAllDatabase(true);
+  clearOldLogs();
   console.log(`O servidor está online: [${HOST}:${PORT}]`);
 });
