@@ -31,104 +31,123 @@ export const syncAllDatabase = async (recursive) => {
   console.log("servers:", servers.length);
   console.log("databases:", databases.length);
 
-  servers
-    .sort((a, b) => a.name - b.name)
-    .forEach((server) => {
-      console.log("  ", server.name, "");
-      databases
-        .filter((database) => database.id_server === server.id)
-        .forEach(async (database) => {
-          console.log("   - ", database.name_client);
-          try {
-            let status_connection = 200;
-            let logDescription = {};
+  const serversSorted = servers.sort((a, b) => a.name - b.name);
 
-            const {
-              value: valueSql0,
-              status: statusSql0,
-              errorMessage: errorMessageLocal,
-            } = await executeSqlLocal(server, database, sqls[0]);
+  const customLoopServers = async (idxServer) => {
+    const server = serversSorted[idxServer];
+    if (!server) return;
+    // console.log("server", server);
 
-            const { value: valueSql1 } = await executeSqlLocal(
-              server,
-              database,
-              sqls[1]
-            );
-            const { value: valueSqlMaxCteToDay } = await executeSqlLocal(
-              server,
-              database,
-              sqls[2]
-            );
+    console.log(" -> ", server.name, "");
 
-            const { value: valueSqlMaxInvoiceToDay } = await executeSqlLocal(
-              server,
-              database,
-              sqls[3]
-            );
+    const customLoopDatabases = async (idxDatabase) => {
+      const dataBasesFiltered = databases.filter(
+        (db) => db.id_server === server.id
+      );
+      const database = dataBasesFiltered[idxDatabase];
+      if (!database) return;
 
-            logDescription = {
-              ...logDescription,
-              travelsLocal: valueSql0,
-              currentDateLocal: valueSql1,
-              max_invoice_today: valueSqlMaxInvoiceToDay,
-              max_cte_today: valueSqlMaxCteToDay,
-              errorMessageLocal,
-            };
+      console.log("   -> ", database.name_client);
 
-            if (status_connection != 500) status_connection = statusSql0;
+      try {
+        console.log(
+          "SINCRONIZANDO...",
+          new Date().toLocaleString("pt-BR"),
+          JSON.stringify(database)
+        );
 
-            console.log("SQL customer 1 - started");
-            const {
-              value: valueCustomerSql0,
-              status: statusCustomer,
-              errorMessage: errorMessageCustomer,
-            } = await executeSqlCustomer(database, sqls[0]);
-            console.log("SQL customer 1 - finished");
-            console.log("SQL customer 2 - started");
-            const { value: valueCustomerSql1 } = await executeSqlCustomer(
-              database,
-              sqls[1]
-            );
-            console.log("SQL customer 2 - finished");
+        let status_connection = 200;
+        let logDescription = {};
 
-            logDescription = {
-              ...logDescription,
-              travelsCustomer: valueCustomerSql0,
-              currentDateCustomer: valueCustomerSql1,
-              errorMessageCustomer,
-            };
+        // console.log("---> 1");
+        const {
+          value: valueSql0,
+          status: statusSql0,
+          errorMessage: errorMessageLocal,
+        } = await executeSqlLocal(server, database, sqls[0]);
+        console.log("executeSqlLocal 1");
+        const { value: valueSql1 } = await executeSqlLocal(
+          server,
+          database,
+          sqls[1]
+        );
+        console.log("executeSqlLocal 2");
+        const { value: valueSqlMaxCteToDay } = await executeSqlLocal(
+          server,
+          database,
+          sqls[2]
+        );
+        console.log("executeSqlLocal 3");
+        const { value: valueSqlMaxInvoiceToDay } = await executeSqlLocal(
+          server,
+          database,
+          sqls[3]
+        );
 
-            if (status_connection != 500) status_connection = statusCustomer;
+        logDescription = {
+          ...logDescription,
+          travelsLocal: valueSql0,
+          currentDateLocal: valueSql1,
+          max_invoice_today: valueSqlMaxInvoiceToDay,
+          max_cte_today: valueSqlMaxCteToDay,
+          errorMessageLocal,
+        };
 
-            const logData = {
-              description: JSON.stringify(logDescription),
-              id_database: database.id,
-              status_connection,
-            };
+        if (status_connection != 500) status_connection = statusSql0;
 
-            await LogController.createLog(logData);
+        console.log("executeSqlCustomer 0");
+        const {
+          value: valueCustomerSql0,
+          status: statusCustomer,
+          errorMessage: errorMessageCustomer,
+        } = await executeSqlCustomer(database, sqls[0]);
 
-            console.log(
-              "SINCRONIZANDO...",
-              new Date().toLocaleString("pt-BR"),
-              JSON.stringify(database)
-            );
+        console.log("executeSqlCustomer 1");
+        const { value: valueCustomerSql1 } = await executeSqlCustomer(
+          database,
+          sqls[1]
+        );
 
-            return logData;
-          } catch (error) {
-            const logData = {
-              description: JSON.stringify({
-                ...logDescription,
-              }),
-              globalErrorMessage: error?.message,
-              id_database: database.id,
-              status_connection: 500,
-            };
-            await LogController.createLog(logData);
-            return logData;
-          }
-        });
-    });
+        logDescription = {
+          ...logDescription,
+          travelsCustomer: valueCustomerSql0,
+          currentDateCustomer: valueCustomerSql1,
+          errorMessageCustomer,
+        };
+
+        if (status_connection != 500) status_connection = statusCustomer;
+
+        const logData = {
+          description: JSON.stringify(logDescription),
+          id_database: database.id,
+          status_connection,
+        };
+        // console.log("---> 9");
+        await LogController.createLog(logData);
+        // console.log("---> 10");
+
+        return logData;
+      } catch (error) {
+        console.log("error::", error);
+        const logData = {
+          description: JSON.stringify({
+            ...logDescription,
+          }),
+          globalErrorMessage: error?.message,
+          id_database: database.id,
+          status_connection: 500,
+        };
+        await LogController.createLog(logData);
+        await customLoopDatabases(idxDatabase + 1);
+      }
+
+      await customLoopDatabases(idxDatabase + 1);
+    };
+    await customLoopDatabases(0);
+
+    await customLoopServers(idxServer + 1);
+  };
+  await customLoopServers(0);
 
   if (recursive) {
     setTimeout(async () => {
