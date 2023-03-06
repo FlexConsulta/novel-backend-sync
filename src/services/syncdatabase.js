@@ -45,6 +45,7 @@ export const syncAllDatabase = async (recursive) => {
         const dataBasesFiltered = databases.filter(
           (db) => db.id_server === server.id
         );
+
         console.log("--->2");
         if (!dataBasesFiltered.length > 0) return;
         console.log("--->3");
@@ -130,8 +131,6 @@ export const syncAllDatabase = async (recursive) => {
         // console.log("---> 9");
         await LogController.createLog(logData);
         // console.log("---> 10");
-
-        return logData;
       } catch (error) {
         console.log("error::", error);
         const logData = {
