@@ -41,18 +41,15 @@ export const syncAllDatabase = async (recursive) => {
 
     const customLoopDatabases = async (idxDatabase) => {
       try {
-        console.log("--->1");
         const dataBasesFiltered = databases.filter(
           (db) => db.id_server === server.id
         );
 
-        console.log("--->2");
         if (!dataBasesFiltered.length > 0) return;
-        console.log("--->3");
+
         const database = dataBasesFiltered[idxDatabase];
-        console.log("--->4");
+
         if (!database) return;
-        console.log("--->5");
 
         console.log("   -> ", database.name_default);
 
@@ -65,25 +62,24 @@ export const syncAllDatabase = async (recursive) => {
         let status_connection = 200;
         let logDescription = {};
 
-        // console.log("---> 1");
         const {
           value: valueSql0,
           status: statusSql0,
           errorMessage: errorMessageLocal,
         } = await executeSqlLocal(server, database, sqls[0]);
-        console.log("executeSqlLocal 1");
+        console.log("executeSqlLocal 0");
         const { value: valueSql1 } = await executeSqlLocal(
           server,
           database,
           sqls[1]
         );
-        console.log("executeSqlLocal 2");
+        console.log("executeSqlLocal 1");
         const { value: valueSqlMaxCteToDay } = await executeSqlLocal(
           server,
           database,
           sqls[2]
         );
-        console.log("executeSqlLocal 3");
+        console.log("executeSqlLocal 2");
         const { value: valueSqlMaxInvoiceToDay } = await executeSqlLocal(
           server,
           database,
@@ -128,9 +124,8 @@ export const syncAllDatabase = async (recursive) => {
           id_database: database.id,
           status_connection,
         };
-        // console.log("---> 9");
+
         await LogController.createLog(logData);
-        // console.log("---> 10");
       } catch (error) {
         console.log("error::", error);
         const logData = {
@@ -156,8 +151,6 @@ export const syncAllDatabase = async (recursive) => {
   console.log("finished all");
 
   if (recursive) {
-    setTimeout(async () => {
-      await syncAllDatabase(true);
-    }, 90000 * 20);
+    await syncAllDatabase(true);
   }
 };
