@@ -24,7 +24,7 @@ export const executeSqlCustomer = async (database, qry) => {
       type: QueryTypes.SELECT,
     });
 
-    let value;
+    let value = null;
     if (qry.fieldName === "dataatual") {
       value = result[0][qry.fieldName]?.toLocaleString("pt-BR");
     } else {
