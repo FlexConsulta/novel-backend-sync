@@ -127,6 +127,8 @@ export const syncAllDatabase = async (recursive) => {
           };
 
           await LogController.createLog(logData);
+
+          await customLoopDatabases(idxDatabase + 1);
         } catch (error) {
           console.log("error::", error);
           const logData = {
@@ -141,8 +143,6 @@ export const syncAllDatabase = async (recursive) => {
 
           await customLoopDatabases(idxDatabase + 1);
         }
-
-        await customLoopDatabases(idxDatabase + 1);
       };
       await customLoopDatabases(0);
 
