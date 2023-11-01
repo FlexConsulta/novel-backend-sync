@@ -11,7 +11,7 @@ const sqls = [
     fieldName: "count",
   },
   {
-    sql: `select now() as dataAtual`,
+    sql: `SELECT NOW() AT TIME ZONE 'America/Cuiaba' AS dataAtual;`,
     fieldName: "dataatual",
   },
   {
