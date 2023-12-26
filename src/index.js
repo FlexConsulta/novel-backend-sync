@@ -3,6 +3,7 @@ import express from "express";
 import { clearOldLogs } from "./services/clearOldLogs";
 import { syncAllDatabase } from "./services/syncdatabase";
 import { syncOneDatabase } from "./services/syncOneDatabase";
+import schedule from 'node-schedule';
 
 const { PORT, HOST } = process.env;
 
@@ -20,7 +21,17 @@ app.get("/test-connection", async (req, res, next) => {
 });
 
 app.listen(PORT, () => {
+
   syncAllDatabase(true);
   clearOldLogs();
+
+  schedule.scheduleJob(process.env.TIME_SCHEDULE, function () {
+
+
+    console.log('The answer to life, the universe, and everything!');
+    syncAllDatabase(true);
+    clearOldLogs();
+  });
+
   console.log(`O servidor está online: [${HOST}:${PORT}]`);
 });
