@@ -7,7 +7,7 @@ import { executeSqlCustomer } from "./../services/sql.customer";
 // todo - ficou definido que nesta primeira verão teremos apenas uma consulta sql, de viagens, poderiormente teremos um cadastro de sql
 const sqls = [
   {
-    sql: `select count(*) from conhecimento where conhecimento.datadigitacao BETWEEN CURRENT_DATE - '30 days'::interval AND CURRENT_DATE`,
+    sql: `select count(*) from conhecimento where conhecimento.datadigitacao BETWEEN CURRENT_DATE - '3 days'::interval AND CURRENT_DATE`,
     fieldName: "count",
   },
   {
