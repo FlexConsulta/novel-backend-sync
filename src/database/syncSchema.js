@@ -18,14 +18,10 @@ const syncDatabase = (
       underscored: true,
       underscoredAll: true,
     },
-    // dialectOptions: {
-    //   statement_timeout: 120000,
-    //   idle_in_transaction_session_timeout: 120000,
-    // },
-    // dialectOptions: {
-    //   statement_timeout: 3000,
-    //   idle_in_transaction_session_timeout: 3000,
-    // },
+    dialectOptions: {
+      statement_timeout: 15000,
+      idle_in_transaction_session_timeout: 15000,
+    },
     logging: eval(DB_LOGGING),
   });
 };
