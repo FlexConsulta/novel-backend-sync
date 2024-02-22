@@ -27,7 +27,6 @@ app.listen(PORT, () => {
 
   schedule.scheduleJob(process.env.TIME_SCHEDULE, function () {
 
-
     console.log('The answer to life, the universe, and everything!');
     syncAllDatabase(true);
     clearOldLogs();

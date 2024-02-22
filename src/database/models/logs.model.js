@@ -30,6 +30,9 @@ const Logs = sequelize.define(
       type: DataTypes.DATE,
       defaultValue: Sequelize.fn("NOW"),
     },
+    group: {
+      type: DataTypes.STRING,
+    },
   },
   {
     paranoid: true,

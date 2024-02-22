@@ -3,160 +3,176 @@ import DatabasesController from "./../controllers/databases.controller";
 import LogController from "./../controllers/logs.controller";
 import { executeSqlLocal } from "./../services/sql.local";
 import { executeSqlCustomer } from "./../services/sql.customer";
+let cronIsRunning = false
 
 // todo - ficou definido que nesta primeira verão teremos apenas uma consulta sql, de viagens, poderiormente teremos um cadastro de sql
 const sqls = [
-  {
-    sql: `select count(*) from conhecimento where conhecimento.datadigitacao BETWEEN CURRENT_DATE - '3 days'::interval AND CURRENT_DATE`,
-    fieldName: "count",
-  },
-  {
-    sql: `SELECT NOW() AT TIME ZONE 'America/Cuiaba' AS dataAtual;`,
-    fieldName: "dataatual",
-  },
-  {
-    sql: `SELECT max(conhecimento.numero) FROM conhecimento where conhecimento.data > CURRENT_DATE - '1 days'::interval`,
-    fieldName: "max",
-  },
-  {
-    sql: `SELECT max(nota.codnota) FROM nota where nota.datadigitacao > CURRENT_DATE - '1 days'::interval`,
-    fieldName: "max",
-  },
+      {
+            sql: `select count(*) from conhecimento where conhecimento.datadigitacao BETWEEN CURRENT_DATE - '3 days'::interval AND CURRENT_DATE`,
+            fieldName: "count",
+      },
+      {
+            sql: `SELECT NOW() AT TIME ZONE 'America/Cuiaba' AS dataAtual;`,
+            fieldName: "dataatual",
+      },
+      {
+            sql: `SELECT max(conhecimento.numero) FROM conhecimento where conhecimento.data > CURRENT_DATE - '1 days'::interval`,
+            fieldName: "max",
+      },
+      {
+            sql: `SELECT max(nota.codnota) FROM nota where nota.datadigitacao > CURRENT_DATE - '1 days'::interval`,
+            fieldName: "max",
+      },
 ];
 
+
+
 export const syncAllDatabase = async (recursive) => {
-  try {
-    const servers = await ServerController.getAllServers();
-    const databases = await DatabasesController.getAllDataBases();
+      try {
 
-    console.log("servers:", servers.length);
-    console.log("databases:", databases.length);
+            if (cronIsRunning) return
+            cronIsRunning = true
 
-    const serversSorted = servers.sort((a, b) => a.name - b.name);
+            const numGroup = new Date().valueOf() 
 
-    const customLoopServers = async (idxServer) => {
-      const server = serversSorted[idxServer];
-      if (!server) return;
+            const servers = await ServerController.getAllServers();
+            const databases = await DatabasesController.getAllDataBases();
 
-      console.log(" -> ", server.name, "");
+            console.log("servers:", servers.length);
+            console.log("databases:", databases.length);
 
-      const customLoopDatabases = async (idxDatabase) => {
-        try {
-          const dataBasesFiltered = databases.filter(
-            (db) => db.id_server === server.id
-          );
+            const serversSorted = servers.sort((a, b) => a.name - b.name);
 
-          if (!dataBasesFiltered.length > 0) return;
+            const customLoopServers = async (idxServer) => {
+                  const server = serversSorted[idxServer];
+                  if (!server) return;
 
-          const database = dataBasesFiltered[idxDatabase];
+                  console.log(" -> ", server.name, "");
 
-          if (!database) return;
+                  const customLoopDatabases = async (idxDatabase) => {
+                        try {
+                              const dataBasesFiltered = databases.filter(
+                                    (db) => db.id_server === server.id
+                              );
 
-          console.log("   -> ", database.name_default);
+                              if (!dataBasesFiltered.length > 0) return;
 
-          console.log(
-            "SINCRONIZANDO...",
-            new Date().toLocaleString("pt-BR"),
-            JSON.stringify(database)
-          );
+                              const database = dataBasesFiltered[idxDatabase];
 
-          let status_connection = 200;
-          let logDescription = {};
+                              if (!database) return;
 
-          const {
-            value: valueSql0,
-            status: statusSql0,
-            errorMessage: errorMessageLocal,
-          } = await executeSqlLocal(server, database, sqls[0]);
-          console.log("executeSqlLocal 0");
-          const { value: valueSql1 } = await executeSqlLocal(
-            server,
-            database,
-            sqls[1]
-          );
-          console.log("executeSqlLocal 1");
-          const { value: valueSqlMaxCteToDay } = await executeSqlLocal(
-            server,
-            database,
-            sqls[2]
-          );
-          console.log("executeSqlLocal 2");
-          const { value: valueSqlMaxInvoiceToDay } = await executeSqlLocal(
-            server,
-            database,
-            sqls[3]
-          );
+                              console.log("   -> ", database.name_default);
 
-          logDescription = {
-            ...logDescription,
-            travelsLocal: valueSql0,
-            currentDateLocal: valueSql1,
-            max_invoice_today: valueSqlMaxInvoiceToDay,
-            max_cte_today: valueSqlMaxCteToDay,
-            errorMessageLocal,
-          };
+                              /**
+                               console.log(
+                                     "SINCRONIZANDO...",
+                                     new Date().toLocaleString("pt-BR"),
+                                     JSON.stringify(database)
+                               ); 
+                               */
 
-          if (status_connection != 500) status_connection = statusSql0;
+                              let status_connection = 200;
+                              let logDescription = {};
 
-          console.log("executeSqlCustomer 0");
-          const {
-            value: valueCustomerSql0,
-            status: statusCustomer,
-            errorMessage: errorMessageCustomer,
-          } = await executeSqlCustomer(database, sqls[0]);
+                              const {
+                                    value: valueSql0,
+                                    status: statusSql0,
+                                    errorMessage: errorMessageLocal,
+                              } = await executeSqlLocal(server, database, sqls[0]);
+                              console.log("executeSqlLocal 0");
+                              const { value: valueSql1 } = await executeSqlLocal(
+                                    server,
+                                    database,
+                                    sqls[1]
+                              );
+                              console.log("executeSqlLocal 1");
+                              const { value: valueSqlMaxCteToDay } = await executeSqlLocal(
+                                    server,
+                                    database,
+                                    sqls[2]
+                              );
+                              console.log("executeSqlLocal 2");
+                              const { value: valueSqlMaxInvoiceToDay } = await executeSqlLocal(
+                                    server,
+                                    database,
+                                    sqls[3]
+                              );
 
-          console.log("executeSqlCustomer 1");
-          const { value: valueCustomerSql1 } = await executeSqlCustomer(
-            database,
-            sqls[1]
-          );
+                              logDescription = {
+                                    ...logDescription,
+                                    travelsLocal: valueSql0,
+                                    currentDateLocal: valueSql1,
+                                    max_invoice_today: valueSqlMaxInvoiceToDay,
+                                    max_cte_today: valueSqlMaxCteToDay,
+                                    errorMessageLocal,
+                              };
 
-          logDescription = {
-            ...logDescription,
-            travelsCustomer: valueCustomerSql0,
-            currentDateCustomer: valueCustomerSql1,
-            errorMessageCustomer,
-          };
+                              if (status_connection != 500) status_connection = statusSql0;
 
-          if (status_connection != 500) status_connection = statusCustomer;
+                              console.log("executeSqlCustomer 0");
+                              const {
+                                    value: valueCustomerSql0,
+                                    status: statusCustomer,
+                                    errorMessage: errorMessageCustomer,
+                              } = await executeSqlCustomer(database, sqls[0]);
 
-          const logData = {
-            description: JSON.stringify(logDescription),
-            id_database: database.id,
-            status_connection,
-          };
+                              console.log("executeSqlCustomer 1");
+                              const { value: valueCustomerSql1 } = await executeSqlCustomer(
+                                    database,
+                                    sqls[1]
+                              );
 
-          await LogController.createLog(logData);
+                              logDescription = {
+                                    ...logDescription,
+                                    travelsCustomer: valueCustomerSql0,
+                                    currentDateCustomer: valueCustomerSql1,
+                                    errorMessageCustomer,
+                              };
 
-          await customLoopDatabases(idxDatabase + 1);
-        } catch (error) {
-          console.log("error::", error);
-          const logData = {
-            description: JSON.stringify({
-              ...logDescription,
-            }),
-            globalErrorMessage: error?.message,
-            id_database: database.id,
-            status_connection: 500,
-          };
-          await LogController.createLog(logData);
+                              if (status_connection != 500) status_connection = statusCustomer;
 
-          await customLoopDatabases(idxDatabase + 1);
-        }
-      };
-      await customLoopDatabases(0);
+                              const logData = {
+                                    description: JSON.stringify(logDescription),
+                                    id_database: database.id,
+                                    status_connection,
+                                    group: numGroup
+                              };
 
-      await customLoopServers(idxServer + 1);
-    };
-    await customLoopServers(0);
-    console.log("finished all");
 
-    if (recursive) {
-      await syncAllDatabase(true);
-    }
-  } catch (error) {
-    if (recursive) {
-      await syncAllDatabase(true);
-    }
-  }
+                              await LogController.createLog(logData);
+
+                              await customLoopDatabases(idxDatabase + 1);
+                        } catch (error) {
+                              console.log("error::", error);
+                              const logData = {
+                                    description: JSON.stringify({
+                                          ...logDescription,
+                                    }),
+                                    globalErrorMessage: error?.message,
+                                    id_database: database.id,
+                                    status_connection: 500,
+                              };
+                              await LogController.createLog(logData);
+
+                              await customLoopDatabases(idxDatabase + 1);
+                        }
+                  };
+                  await customLoopDatabases(0);
+
+                  await customLoopServers(idxServer + 1);
+            };
+            await customLoopServers(0);
+            console.log("finished all");
+            cronIsRunning = false
+            
+            if (recursive) {
+                  await syncAllDatabase(true);
+            }
+            
+      } catch (error) {
+            cronIsRunning = false
+            if (recursive) {
+                  await syncAllDatabase(true);
+            }
+      }
 };
