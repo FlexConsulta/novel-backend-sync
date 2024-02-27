@@ -22,14 +22,14 @@ app.get("/test-connection", async (req, res, next) => {
 
 app.listen(PORT, () => {
 
-  // syncAllDatabase(true);
-  // clearOldLogs();
+  syncAllDatabase(true);
+  clearOldLogs();
 
   schedule.scheduleJob(process.env.TIME_SCHEDULE, function () {
 
     console.log('The answer to life, the universe, and everything!');
-    // syncAllDatabase(true);
-    // clearOldLogs();
+    syncAllDatabase(true);
+    clearOldLogs();
   });
 
   console.log(`O servidor está online: [${HOST}:${PORT}]`);
