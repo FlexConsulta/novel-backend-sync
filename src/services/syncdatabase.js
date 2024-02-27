@@ -159,7 +159,7 @@ export const syncAllDatabase = async (recursive) => {
                   await customLoopServers(idxServer + 1);
             };
             await customLoopServers(0);
-            console.log("finished all");
+            console.log("FINALIZADA CRON IMPORT DATABASE");
             return true
             
             

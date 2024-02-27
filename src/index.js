@@ -27,7 +27,7 @@ app.listen(PORT, () => {
   schedule.scheduleJob(process.env.TIME_SCHEDULE, async function () {
 
     if(!syncOn){
-      console.log('The answer to life, the universe, and everything!');
+      console.log('INICIO CRON IMPORT DATABASE!');
       syncOn = true
       await syncAllDatabase(true);
       await clearOldLogs();
