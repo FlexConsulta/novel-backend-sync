@@ -30,9 +30,6 @@ const sqls = [
 export const syncAllDatabase = async (recursive) => {
       try {
 
-            if (cronIsRunning) return
-            cronIsRunning = true
-
             const numGroup = new Date().valueOf() 
 
             const servers = await ServerController.getAllServers();
@@ -163,16 +160,10 @@ export const syncAllDatabase = async (recursive) => {
             };
             await customLoopServers(0);
             console.log("finished all");
-            cronIsRunning = false
+            return true
             
-            if (recursive) {
-                  await syncAllDatabase(true);
-            }
             
       } catch (error) {
             cronIsRunning = false
-            if (recursive) {
-                  await syncAllDatabase(true);
-            }
       }
 };
