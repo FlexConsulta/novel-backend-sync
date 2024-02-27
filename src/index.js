@@ -22,8 +22,8 @@ app.get("/test-connection", async (req, res, next) => {
 
 app.listen(PORT, () => {
 
-  syncAllDatabase(true);
-  clearOldLogs();
+  // syncAllDatabase(true);
+  // clearOldLogs();
 
   schedule.scheduleJob(process.env.TIME_SCHEDULE, function () {
 
