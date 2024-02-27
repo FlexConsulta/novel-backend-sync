@@ -22,15 +22,13 @@ app.get("/test-connection", async (req, res, next) => {
 
 app.listen(PORT, () => {
 
-  // syncAllDatabase(true);
+  syncAllDatabase(true);
   clearOldLogs();
-
-  console.log('====> ', process.env.TIME_SCHEDULE);
 
   schedule.scheduleJob(process.env.TIME_SCHEDULE, function () {
 
     console.log('The answer to life, the universe, and everything!');
-    // syncAllDatabase(true);
+    syncAllDatabase(true);
     clearOldLogs();
   });
 
