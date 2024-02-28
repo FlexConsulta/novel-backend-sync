@@ -18,7 +18,8 @@ export const executeSqlCustomer = async (database, qry) => {
       hostname_client,
       "postgres",
       port_client,
-      false
+      false,
+      database?.schemabd || 'public',
     );
     const result = await connection.query(qry.sql, {
       type: QueryTypes.SELECT,

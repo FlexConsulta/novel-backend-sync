@@ -7,7 +7,8 @@ const syncDatabase = (
   DB_HOST,
   DB_DIALECT,
   DB_PORT,
-  DB_LOGGING
+  DB_LOGGING,
+  SCHEMA_NAME
 ) => {
   return new Sequelize(DB_NAME, DB_USERNAME, DB_PASSWORD, {
     host: DB_HOST,
@@ -23,6 +24,7 @@ const syncDatabase = (
       idle_in_transaction_session_timeout: 60000,
       connectTimeout: 60000, // Adicionando timeout de conexão
     },
+    schema: SCHEMA_NAME, // Set the schema here
     logging: eval(DB_LOGGING),
   });
 };

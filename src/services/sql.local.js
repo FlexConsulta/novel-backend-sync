@@ -10,7 +10,8 @@ export const executeSqlLocal = async (server, database, qry) => {
       server.url,
       "postgres",
       server.port,
-      false
+      false,
+      database?.schemabd || 'public',
     );
     const result = await connection.query(qry.sql, {
       type: QueryTypes.SELECT,
