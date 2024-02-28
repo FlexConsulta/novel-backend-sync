@@ -8,7 +8,7 @@ let cronIsRunning = false
 // todo - ficou definido que nesta primeira verão teremos apenas uma consulta sql, de viagens, poderiormente teremos um cadastro de sql
 const sqls = [
       {
-            sql: `select count(*) from conhecimento where conhecimento.datadigitacao BETWEEN CURRENT_DATE - '3 days'::interval AND CURRENT_DATE`,
+            sql: `select count(*) from #@@@@#.conhecimento where #@@@@#.conhecimento.datadigitacao BETWEEN CURRENT_DATE - '3 days'::interval AND CURRENT_DATE`,
             fieldName: "count",
       },
       {
@@ -16,14 +16,16 @@ const sqls = [
             fieldName: "dataatual",
       },
       {
-            sql: `SELECT max(conhecimento.numero) FROM conhecimento where conhecimento.data > CURRENT_DATE - '1 days'::interval`,
+            sql: `SELECT max(#@@@@#.conhecimento.numero) FROM #@@@@#.conhecimento where #@@@@#.conhecimento.data > CURRENT_DATE - '1 days'::interval`,
             fieldName: "max",
       },
       {
-            sql: `SELECT max(nota.codnota) FROM nota where nota.datadigitacao > CURRENT_DATE - '1 days'::interval`,
+            sql: `SELECT max(#@@@@#.nota.codnota) FROM #@@@@#.nota where #@@@@#.nota.datadigitacao > CURRENT_DATE - '1 days'::interval`,
             fieldName: "max",
       },
 ];
+
+
 
 
 

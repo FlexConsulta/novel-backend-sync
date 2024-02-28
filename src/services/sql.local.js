@@ -14,8 +14,11 @@ export const executeSqlLocal = async (server, database, qry) => {
       false,
       database?.schemabd_default || 'public',
     );
-    
-    const result = await connection.query(qry.sql, {
+
+    let sql = qry.sql
+    if (sql.indexOf('#@@@@#') > -1) sql = sql.replaceAll('#@@@@#', database?.schemabd_default || 'public')
+
+    const result = await connection.query(sql, {
       type: QueryTypes.SELECT,
     });
 
