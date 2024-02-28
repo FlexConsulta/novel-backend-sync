@@ -4,7 +4,6 @@ import { QueryTypes } from "sequelize";
 export const executeSqlLocal = async (server, database, qry) => {
   try {
 
-    console.log('LOCAL', {database});
     const connection = syncDatabase(
       database.name_default,
       database.user_default,

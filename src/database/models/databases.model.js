@@ -68,6 +68,12 @@ const Databases = Sequelize.define(
     status_connection: {
       type: DataTypes.STRING,
     },
+    schemabd_default: {
+      type: DataTypes.STRING,
+    },
+    schemabd: {
+      type: DataTypes.STRING,
+    },
     sincronizacao: {
       type: DataTypes.BOOLEAN,
     },

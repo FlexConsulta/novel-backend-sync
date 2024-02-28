@@ -12,8 +12,6 @@ export const executeSqlCustomer = async (database, qry) => {
       schemabd
     } = database;
 
-    console.log('CUSTOMER', { database });
-
     const connection = syncDatabase(
       name_client,
       user_client,
