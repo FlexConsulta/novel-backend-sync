@@ -11,8 +11,8 @@ const syncDatabase = (
   SCHEMA_NAME
 ) => {
 
-  if (SCHEMA_NAME == 'public') {
-    console.log({SCHEMA_NAME});
+  if (SCHEMA_NAME !== 'public') {
+    console.log({DB_NAME , SCHEMA_NAME});
   }
   
   return new Sequelize(DB_NAME, DB_USERNAME, DB_PASSWORD, {
