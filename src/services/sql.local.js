@@ -14,6 +14,7 @@ export const executeSqlLocal = async (server, database, qry) => {
       false,
       database?.schemabd_default || 'public',
     );
+    
     const result = await connection.query(qry.sql, {
       type: QueryTypes.SELECT,
     });
