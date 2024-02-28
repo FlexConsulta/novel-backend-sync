@@ -60,14 +60,6 @@ export const syncAllDatabase = async (recursive) => {
 
                               console.log("   -> ", database.name_default);
 
-                              /**
-                               console.log(
-                                     "SINCRONIZANDO...",
-                                     new Date().toLocaleString("pt-BR"),
-                                     JSON.stringify(database)
-                               ); 
-                               */
-
                               let status_connection = 200;
                               let logDescription = {};
 

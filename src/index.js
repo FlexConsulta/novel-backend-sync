@@ -20,13 +20,14 @@ app.get("/test-connection", async (req, res, next) => {
   res.send(newLog).status(200);
 });
 
-app.listen(PORT, () => {
+app.listen(PORT, async () => {
 
   let syncOn = false
+  await syncAllDatabase(true);
 
   schedule.scheduleJob(process.env.TIME_SCHEDULE, async function () {
 
-    if(!syncOn){
+    if (!syncOn) {
       console.log('INICIO CRON IMPORT DATABASE!');
       syncOn = true
       await syncAllDatabase(true);
@@ -37,5 +38,5 @@ app.listen(PORT, () => {
   });
 
   console.log(`O servidor está online: [${HOST}:${PORT}]`);
-  
+
 });

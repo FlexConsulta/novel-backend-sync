@@ -9,7 +9,10 @@ export const executeSqlCustomer = async (database, qry) => {
       password_client,
       hostname_client,
       port_client,
+      schemabd
     } = database;
+
+    console.log('CUSTOMER', { database });
 
     const connection = syncDatabase(
       name_client,
@@ -19,7 +22,7 @@ export const executeSqlCustomer = async (database, qry) => {
       "postgres",
       port_client,
       false,
-      database?.schemabd || 'public',
+      schemabd || 'public',
     );
     const result = await connection.query(qry.sql, {
       type: QueryTypes.SELECT,
